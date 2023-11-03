@@ -1,0 +1,26 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-projectathena-dev-125855-authRole",
+      "UnauthRoleArn": "arn:aws:iam::223658774641:role/amplify-projectathena-dev-125855-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::223658774641:role/amplify-projectathena-dev-125855-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-projectathena-dev-125855-deployment",
+      "UnauthRoleName": "amplify-projectathena-dev-125855-unauthRole",
+      "StackName": "amplify-projectathena-dev-125855",
+      "StackId": "arn:aws:cloudformation:us-east-1:223658774641:stack/amplify-projectathena-dev-125855/db24be90-7a1e-11ee-bf19-0a873b10b8cd",
+      "AmplifyAppId": "dlcztqd2a0xzn"
+    },
+    "categories": {
+      "function": {
+        "AthenaApi": {
+          "deploymentBucketName": "amplify-projectathena-dev-125855-deployment",
+          "s3Key": "amplify-builds/AthenaApi-4b6e7750655972396f47-build.zip"
+        }
+      },
+      "api": {
+        "athenaapi": {}
+      }
+    }
+  }
+}
