@@ -7,6 +7,16 @@ verify_ssl = true
 
 [packages]
 src = {editable = true, path = "./src"}
+pinecone-client = "==2.2.1"
+tiktoken = "==0.4.0"
+openai = "==0.27.7"
+langchain = "==0.0.179"
+datasets = "==2.13.1"
+ironpdf = "*"
+pdfquery = "*"
+pypdf2 = "*"
+urllib3 = "<=1.26.15"
+numpy = "*"
 
 [requires]
 python_version = "3.8"

@@ -12,7 +12,7 @@ import pinecone
 import openai
 
 
-def query_gpt(api_key_openai, api_key_pinecone, index_name, embed_model_name, query):
+def query_gpt(api_key_openai, api_key_pinecone, index_name, embed_model_name, query, history="\{\}"):
     # Setup OpenAI GPT API
     openai.api_key = api_key_openai
 
@@ -20,24 +20,7 @@ def query_gpt(api_key_openai, api_key_pinecone, index_name, embed_model_name, qu
     pinecone.init(api_key=api_key_pinecone, environment='gcp-starter')
     index = pinecone.Index(index_name)
 
-    # Initialize ChatOpenAI model
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo", openai_api_key=api_key_openai)
-
-    # Setup the conversation memory buffer
-    buffer_memory = ConversationBufferWindowMemory(k=3, return_messages=True)
-
-    # Define the prompt template
-    system_msg_template = SystemMessagePromptTemplate.from_template(
-        template="""Answer the question as truthfully as possible using the provided context,
-        and if the answer is not contained within the text below, say 'I don't know'""")
-    human_msg_template = HumanMessagePromptTemplate.from_template(template="{input}")
-    prompt_template = ChatPromptTemplate.from_messages(
-        [system_msg_template, MessagesPlaceholder(variable_name="history"), human_msg_template])
-
-    # Initialize the conversation chain
-    conversation = ConversationChain(memory=buffer_memory, prompt=prompt_template, llm=llm, verbose=True)
-
-
+    # Accept user input and generate response
     res = openai.Embedding.create(
         input=[query],
         engine=embed_model_name
@@ -50,10 +33,10 @@ def query_gpt(api_key_openai, api_key_pinecone, index_name, embed_model_name, qu
 
     # Augment the query with relevant contexts
     augmented_query = f"""\n\n---\n\ncontext='The bot (Owl) will have to be ...'""".join(
-        contexts) + "\n\n-----\n\n" + query
+        contexts) + "\n\n-----\n\nliterature(Article/Book/PDF)=" + history+"\n\n----\n\n" + query
 
     # Define the primer
-    primer = "You're owl of Athena, Be friendly and supportive to help others learning"
+    primer = "You're owl of Athena, Be friendly and supportive to help others learning. You can be referred as the literature enclosed as well. e.g. you will be asked to personify the literature as yourself"
 
     # Query GPT-4
     res = openai.ChatCompletion.create(
@@ -64,16 +47,23 @@ def query_gpt(api_key_openai, api_key_pinecone, index_name, embed_model_name, qu
         ]
     )
 
-    return res
+    return res['choices'][0]
+
 
 def handler(event, context):
   print('received event:')
   print(event)
+  query='Hi there! How are you?'
+  history="\{\}"
+  if event and event['question'] is not None:
+     query=event['question']
+  if event and event["context"] is not None:
+     history=event["context"]
   res = query_gpt(api_key_openai="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",
-            api_key_pinecone="09a611bc-0e25-4710-9f6d-1386849bd03e",
-            index_name="articles",
-            embed_model_name="text-embedding-ada-002",
-            query="What is the best way to learn a new language?")
+                  api_key_pinecone="09a611bc-0e25-4710-9f6d-1386849bd03e",
+                  index_name="articles",
+                  embed_model_name="text-embedding-ada-002",
+                  query=query, history=history)
   return {
       'statusCode': 200,
       'headers': {
@@ -81,5 +71,5 @@ def handler(event, context):
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
       },
-      'body': json.dumps({'res':res})
+      'body': res
   }

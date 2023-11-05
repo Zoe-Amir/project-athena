@@ -15,7 +15,7 @@
       "function": {
         "AthenaApi": {
           "deploymentBucketName": "amplify-projectathena-dev-125855-deployment",
-          "s3Key": "amplify-builds/AthenaApi-4b6e7750655972396f47-build.zip"
+          "s3Key": "amplify-builds/AthenaApi-4b2b4877466b32333076-build.zip"
         }
       },
       "api": {
